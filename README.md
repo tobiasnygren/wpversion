@@ -1,7 +1,6 @@
 # wpv.sh
 Showing latest version of WordPress. Updated every 15 mins.
 
-
 ## How it works
 
 #### List all tags in remote repo
@@ -23,3 +22,10 @@ awk -F'/' '{print $3}'
 git ls-remote --tags https://github.com/WordPress/WordPress.git | tail -n1 | awk -F'/' '{print $3}'
 ```
 source/inspiration: https://stackoverflow.com/a/20742976
+
+
+## TODO
+
+- [ ] Move cron to Github Actions (WIP)
+
+- [ ] Move hosting to Github

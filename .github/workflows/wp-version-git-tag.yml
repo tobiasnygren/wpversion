@@ -34,7 +34,7 @@ jobs:
                 git config --local user.name "GitHub's Little Builder"
                 git add .
                 git commit -m "$wpversion, checked: $(date +'%F %T %Z')"
-                git push origin main
+                git push origin master
           else
             exit 0;
           fi

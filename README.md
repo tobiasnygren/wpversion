@@ -1,4 +1,4 @@
-# wpv.sh
+# wpversion
 Showing latest version of WordPress. Updated every 15 mins.
 
 ## How it works

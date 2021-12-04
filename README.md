@@ -26,6 +26,6 @@ source/inspiration: https://stackoverflow.com/a/20742976
 
 ## TODO
 
-- [ ] Move cron to Github Actions (WIP)
+- [x] Move cron to Github Actions (WIP)
 
 - [ ] Move hosting to Github

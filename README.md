@@ -28,4 +28,4 @@ source/inspiration: https://stackoverflow.com/a/20742976
 
 - [x] Move cron to Github Actions (WIP)
 
-- [ ] Move hosting to Github
+- [x] Move hosting to Github 

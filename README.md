@@ -1,5 +1,5 @@
 # wpversion
-Showing latest version of WordPress. Updated every 15 mins.
+Showing latest version of WordPress. Updated every ~~15 mins~~ hour at XX:15.
 
 ## How it works
 

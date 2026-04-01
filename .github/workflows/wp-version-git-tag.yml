@@ -27,18 +27,42 @@ jobs:
     # Get WordPress version
     - name: Get WordPress version
       run: |
-        export wpversion=$(git ls-remote --tags https://github.com/WordPress/WordPress.git | tail -n1 | awk -F'/' '{print $3}')
-        if [ -n "$wpversion" ]; then
-          export fileversion=$(cat index.html)
-          if [ $fileversion != $wpversion ];
-          then
-                echo $wpversion > index.html
-                git config --local user.email "builder@github.example"
-                git config --local user.name "GitHub's Little Builder"
-                git add .
-                git commit -m "$wpversion, checked: $(date +'%F %T %Z')"
-                git push origin master
-          else
-            exit 0;
+        MAX_ATTEMPTS=3
+        RETRY_DELAY=10
+        wpversion=""
+
+        for attempt in $(seq 1 $MAX_ATTEMPTS); do
+          raw=$(timeout 30 git ls-remote --tags https://github.com/WordPress/WordPress.git 2>/dev/null \
+                | grep -v '\^{}' | tail -n1 | awk -F'/' '{print $3}')
+          if [ -n "$raw" ]; then
+            wpversion="$raw"
+            break
           fi
+          if [ "$attempt" -lt "$MAX_ATTEMPTS" ]; then
+            echo "Attempt $attempt/$MAX_ATTEMPTS failed or returned empty. Retrying in ${RETRY_DELAY}s..."
+            sleep $RETRY_DELAY
+          fi
+        done
+
+        if [ -z "$wpversion" ]; then
+          echo "Could not reach GitHub after $MAX_ATTEMPTS attempts. Skipping (transient error)."
+          exit 0
         fi
+
+        if ! echo "$wpversion" | grep -qE '^[0-9]+\.[0-9]+(\.[0-9]+)?$'; then
+          echo "Version string '$wpversion' failed validation. Skipping."
+          exit 0
+        fi
+
+        fileversion=$(cat index.html)
+        if [ "$fileversion" = "$wpversion" ]; then
+          echo "Already at $wpversion, nothing to do."
+          exit 0
+        fi
+
+        echo "$wpversion" > index.html
+        git config --local user.email "builder@github.example"
+        git config --local user.name "GitHub's Little Builder"
+        git add .
+        git commit -m "$wpversion, checked: $(date +'%F %T %Z')"
+        git push origin master
